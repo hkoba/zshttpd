@@ -143,7 +143,7 @@ function zshttpd_read_header {
 	fi
 	;;
 	(POST)
-	# How can I use indirection on assoc array?
+	# XXX: How can I use indirection on assoc array?
 	# ${{(P)headerVar}[content-length:]} doesn't work.
 	read -r -u $fd -k $_header[content-length:] qstr
 	;;
@@ -183,15 +183,16 @@ function zshttpd_func/test {
 }
 
 function zshttpd_func/push-string {
-    zle -U "$*"
+    # argv=(args "value" ...)
+    zle -U "$argv[2]"
     zle -I
 }
 
 function zshttpd_func/insert-string {
-    zle zshttpd_zle-insert-string $*
+    zle zshttpd_zle-insert-string "$argv[2]"
 }
 
 function zshttpd_zle-insert-string {
-    BUFFER="$*"
+    BUFFER+=" $*"
 }
 zle -N zshttpd_zle-insert-string
