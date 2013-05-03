@@ -1,0 +1,20 @@
+<html>
+<head>
+<meta charset="utf-8">
+<link rel=stylesheet type=text/css href=main.css>
+<script src="zshui.js"></script>
+<script>
+
+</script>
+
+</head>
+<body>
+<h2>ZSH HTTPD</h2>
+<form>
+<textarea name="arglist"></textarea>
+<button type=button onclick="alert(http_call('/test', arglist.value))">テスト</button>
+<input type="submit" value="send">
+</form>
+<div id=history></div>
+</body>
+</html>
