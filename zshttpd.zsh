@@ -1,4 +1,4 @@
-# -*- Shell-Script -*-
+#!/bin/zsh
 
 typeset -A ZSHTTPD
 : ${ZSHTTPD[port]=8080}
@@ -64,7 +64,7 @@ function zshttpd_accept {
 	return 1
     }
     local fd=$REPLY
-    # Should do access restriction
+    # XXX: Should do access restriction
 
     local -a query
     local -A request header
@@ -168,6 +168,7 @@ function zshttpd_read_header {
     return 0
 }
 
+# Sorry, I use perl here. (>_<)
 function zshttpd_parse_query {
     # use this via ${(ps:\0:)"$(this command)"}
     perl -Mstrict -MCGI -we '
@@ -178,7 +179,7 @@ function zshttpd_parse_query {
 
 
 function zshttpd_func/test {
-    echo -- $*
+    print -- $*
 }
 
 function zshttpd_func/push-string {

@@ -12,7 +12,9 @@
 <h2>ZSH HTTPD</h2>
 <form>
 <textarea name="arglist"></textarea>
-<button type=button onclick="alert(http_call('/test', arglist.value))">テスト</button>
+<button type=button onclick="alert(http_call('/test', arglist.value))">zshttpd_func/test</button>
+<button type=button onclick="alert(http_call('/push-string', arglist.value))">zshttpd_func/push-string</button>
+<button type=button onclick="alert(http_call('/insert-string', arglist.value))">zshttpd_func/insert-string</button>
 <input type="submit" value="send">
 </form>
 <div id=history></div>
