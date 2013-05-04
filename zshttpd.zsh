@@ -194,5 +194,6 @@ function zshttpd_func/insert-string {
 
 function zshttpd_zle-insert-string {
     BUFFER+=" $*"
+    zle -R
 }
 zle -N zshttpd_zle-insert-string
