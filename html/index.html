@@ -33,7 +33,8 @@ $(function () {
      $.ajax({type: "POST", url: "/line-replace", data: cmd})
   })
   cmds.click(function () {
-     $.ajax({type: "POST", url: "/run-current"})
+     $.ajax({type: "POST", url: "/run-current"});
+     return false;
   })
 })})(window.jQuery)
 </script>

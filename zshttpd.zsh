@@ -31,10 +31,13 @@ zmodload -i zsh/stat
 
 function zshttpd {
     ((ARGC)) || {
-	echo 1>&2 Usage: zshttpd DOCROOT_DIR
+	echo 1>&2 Usage: zshttpd DOCROOT_DIR '?PORT?'
 	return 1
     }
     ZSHTTPD[docroot]=$1; shift
+    if ((ARGC)); then
+	ZSHTTPD[port]=$1; shift
+    fi
     local name value
     for name value in $*
     do
@@ -214,15 +217,17 @@ zle -N zshttpd_zle-insert-string
 
 function zshttpd_func/run-current {
     local fd=$1; shift
-    zle zshttpd_zle-accept-line
+    zle accept-line
+    # zle zshttpd_debug-zle-accept-line
 }
-function zshttpd_zle-accept-line {
+
+function zshttpd_debug-zle-accept-line {
     # XXX: Why this doesn't work?
     local selfpid=$$
     (sleep 1; kill -INT $selfpid) &!
     zle accept-line
 }
-zle -N zshttpd_zle-accept-line
+zle -N zshttpd_debug-zle-accept-line
 
 if ((ARGC)) && [[ -n $1 ]]; then
     zshttpd $1

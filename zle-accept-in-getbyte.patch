@@ -1,0 +1,23 @@
+diff --git a/Src/Zle/zle_main.c b/Src/Zle/zle_main.c
+index 442c319..0696ed1 100644
+--- a/Src/Zle/zle_main.c
++++ b/Src/Zle/zle_main.c
+@@ -819,6 +819,8 @@ raw_getbyte(long do_keytmout, char *cptr)
+ 		    }
+ 		}
+ # endif
++		if (done)
++		  break;
+ 	    }
+ 	}
+ # ifdef HAVE_POLL
+@@ -850,6 +852,9 @@ raw_getbyte(long do_keytmout, char *cptr)
+ #endif
+     }
+ 
++    if (done)
++      return 1;
++
+     winch_unblock();
+     ret = read(SHTTY, cptr, 1);
+     winch_block();
