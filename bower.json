@@ -1,0 +1,26 @@
+{
+  "name": "zshttpd",
+  "version": "0.0.1",
+  "homepage": "https://github.com/hkoba/zshttpd",
+  "authors": [
+    "KOBAYASI",
+    "Hiroaki <buribullet@gmail.com>"
+  ],
+  "description": "Dependencies for zshttpd demo.",
+  "main": "html/zshui.js",
+  "keywords": [
+    "zsh"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "jquery": "~2.1.4"
+  }
+}

@@ -1,22 +1,41 @@
+<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
-<link rel=stylesheet type=text/css href=main.css>
-<script src="zshui.js"></script>
-<script>
-
-</script>
-
+<title>zshttpd</title>
+<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap-theme.min.css" />
+<meta name="viewport" content="width=device-width, user-scalable=yes" />
 </head>
 <body>
-<h2>ZSH HTTPD</h2>
-<form>
-<textarea name="arglist"></textarea>
-<button type=button onclick="alert(http_call('/test', arglist.value))">zshttpd_func/test</button>
-<button type=button onclick="alert(http_call('/push-string', arglist.value))">zshttpd_func/push-string</button>
-<button type=button onclick="alert(http_call('/insert-string', arglist.value))">zshttpd_func/insert-string</button>
-<input type="submit" value="send">
-</form>
-<div id=history></div>
+  <h2>zshttpd</h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+	<ul class="nav nav-default nav-tabs nav-stacked">
+	  <li class="nav-header">Commands</li>
+	  <li><a class="zsh-cmd" href="#">ls -l</a>
+	  <li><a class="zsh-cmd" href="#">ps auxww</a>
+	</ul>
+      </div>
+    </div>
+  </div>
+<script src="/vendor/jquery/dist/jquery.min.js"></script>
+<script src="/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+(function ($) {
+"use strict";
+$(function () {
+  var cmds = $('a.zsh-cmd');
+  cmds.hover(function () {
+     var cmd = escape($(this).text());
+     console.log("hover: cmd: ", cmd);
+     $.ajax({type: "POST", url: "/line-replace", data: cmd})
+  })
+  cmds.click(function () {
+     $.ajax({type: "POST", url: "/run-current"})
+  })
+})})(window.jQuery)
+</script>
 </body>
 </html>

@@ -1,5 +1,11 @@
 #!/bin/zsh
 
+if ! perl -MURI::Escape -e0 2>/dev/null; then
+    echo 1>&2 Please install URI::Escape.
+    print -z cpanm URI::Escape
+    return 1
+fi
+
 typeset -A ZSHTTPD
 : ${ZSHTTPD[port]=8080}
 : ${ZSHTTPD[verbose]=0}
@@ -73,7 +79,7 @@ function zshttpd_accept {
 	local func=zshttpd_func$request[url]
 	if functions $func >/dev/null; then
 	    zshttpd_print_header >&$fd "200 Ok" text/plain
-	    $func "$query[@]" >&$fd
+	    $func $fd "$query[@]"
 	    break
 	fi
 
@@ -170,13 +176,19 @@ function zshttpd_read_header {
 
 # Sorry, I use perl here. (>_<)
 function zshttpd_parse_query {
-    # use this via ${(ps:\0:)"$(this command)"}
-    perl -Mstrict -MCGI -we '
-      my $cgi = new CGI(shift);
-      print join("\0", map {"$_\0" . join("\t", $cgi->param($_))} $cgi->param)
+    # use this like ${(ps:\0:)"$(thisfunc $qstr)"}
+    # Since use of CGI.pm can cause 'keywords' argument problem,
+    # I switched to CGI::Escape
+    # This can return odd number of arguments, which is not good for dict.
+    perl -Mstrict -MURI::Escape -we '
+      my @params = map {
+         join("\0", map {uri_unescape($_)} split /=/, $_, 2)
+      } split /[;&]/, shift;
+      print join("\0", @params)
     ' $1
 }
 
+# zshttpd_func/ENTRY will be called with $fdn0 @CGI_PARAMS
 
 function zshttpd_func/test {
     print -- $*
@@ -184,16 +196,36 @@ function zshttpd_func/test {
 
 function zshttpd_func/push-string {
     # argv=(args "value" ...)
+    local fd=$1; shift
     zle -U "$argv[2]"
     zle -I
 }
 
-function zshttpd_func/insert-string {
-    zle zshttpd_zle-insert-string "$argv[2]"
+function zshttpd_func/line-replace {
+    local fd=$1; shift
+    zle zshttpd_zle-insert-string "$argv[@]"
 }
 
 function zshttpd_zle-insert-string {
-    BUFFER+=" $*"
+    BUFFER="$*"
     zle -R
 }
 zle -N zshttpd_zle-insert-string
+
+function zshttpd_func/run-current {
+    local fd=$1; shift
+    zle zshttpd_zle-accept-line
+}
+function zshttpd_zle-accept-line {
+    # XXX: Why this doesn't work?
+    local selfpid=$$
+    (sleep 1; kill -INT $selfpid) &!
+    zle accept-line
+}
+zle -N zshttpd_zle-accept-line
+
+if ((ARGC)) && [[ -n $1 ]]; then
+    zshttpd $1
+elif [[ -t 0 && -t 1 ]]; then
+    echo Now zshttpd can run with "zshttpd DIR"
+fi
